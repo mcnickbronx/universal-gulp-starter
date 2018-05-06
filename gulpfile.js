@@ -1,4 +1,4 @@
-// v.1.1.0
+// v.1.2.0
 
 /* Tasks:
 copy - copy files From To... Uses p.copy array. 
@@ -65,6 +65,14 @@ p.copy =  [
         to: p.devSass + 'uikit/' 
     },
     { 
+        from: [p.bower + 'uikit/src/less/**/*.less'],
+        to: p.devLess + 'uikit/' 
+    },
+    { 
+        from: [p.bower + 'uikit/dist/css/**/*.css'],
+        to: p.pubCss + 'uikit/' 
+    },
+    { 
         from: [p.bower + 'uikit/dist/js/*.js', '!'+p.bower + 'uikit/dist/js/*.min.js'],
         to: p.devJs + 'uikit/' 
     }         
@@ -113,7 +121,7 @@ var gulp = require('gulp'),
     less = require('gulp-less'),
     streamqueue  = require('streamqueue');
 
-// Copy files 
+// Copy files
 gulp.task('copy', function() {
     var index, len;
     for (index = 0, len = p.copy.length; index < len; ++index) {
@@ -141,7 +149,7 @@ gulp.task('sass', function () {
         .pipe(csso({sourceMap: true})) 
         .pipe(rename({suffix: '.min'})) 
         .pipe(gulp.dest(p.pubCss))
-        .pipe(browserSync.reload({stream: true}));
+        .pipe(browserSync.reload());
 });
 
 // Run:
@@ -162,14 +170,15 @@ gulp.task('less', function () {
     return gulp.src(p.filesLess) 
         .pipe(plumber()) 
         .pipe(sourcemaps.init())
-        .pipe(less())  
+        .pipe(less()) 
         .pipe(autoprefixer(['last 3 version']))
         .pipe(sourcemaps.write())  
         .pipe(gulp.dest(p.pubCss))
         .pipe(csso({sourceMap: true})) 
         .pipe(rename({suffix: '.min'})) 
         .pipe(gulp.dest(p.pubCss))
-        .pipe(browserSync.reload({stream: true}))
+        .pipe(browserSync.reload());
+
 });
 
 // gulp build less (not sourcemaps) 
@@ -197,7 +206,7 @@ gulp.task('css', function () {
             .pipe(sourcemaps.write()) 
             .pipe(rename({suffix: '.min'}))
             .pipe(gulp.dest(p.pubCss))
-            .pipe(browserSync.reload({stream: true}))
+            .pipe(browserSync.reload())
     );
     streamqueue({ objectMode: true },
         gulp.src(p.filesCss)
@@ -206,7 +215,7 @@ gulp.task('css', function () {
             .pipe(csso({sourceMap: true})) 
             .pipe(rename({suffix: '.min'})) 
             .pipe(gulp.dest(p.pubCss))
-            .pipe(browserSync.reload({stream: true}))
+            .pipe(browserSync.reload())
     );
 });
 
@@ -245,7 +254,7 @@ gulp.task('js', function() {
             .pipe(rename({suffix: '.min'}))
             .pipe(sourcemaps.write())
             .pipe(gulp.dest(p.pubJs))
-            .pipe(browserSync.reload({stream: true}))
+            .pipe(browserSync.reload())
     );
     streamqueue({ objectMode: true },
         gulp.src(p.filesJs)
@@ -253,7 +262,7 @@ gulp.task('js', function() {
             .pipe(uglify())
             .pipe(rename({suffix: '.min'})) 
             .pipe(gulp.dest(p.pubJs))
-            .pipe(browserSync.reload({stream: true}))
+            .pipe(browserSync.reload())
     );
 });
 
@@ -286,11 +295,11 @@ gulp.task('sync', function () {
 });
 
 gulp.task('watch', ['sync'], function () {
-    gulp.watch(p.devSaas + '**/*.scss', ['sass']);
+    gulp.watch(p.devSass + '**/*.scss', ['sass']);
     gulp.watch(p.devLess + '**/*.less', ['less']);
     gulp.watch(p.devCss + '**/*.css', ['css']);
     gulp.watch(p.devJs + '**/*.js', ['js']);
-
+    
     gulp.watch('**/*.php', browserSync.reload);
     gulp.watch('**/*.html', browserSync.reload);
 });
@@ -303,6 +312,7 @@ gulp.task('build-pub', ['sass-pub','less-pub','css-pub', 'js-pub']);
 
 // default task
 gulp.task('default', ['watch']);
+
 
 // To do
 // imagemin = require('gulp-imagemin'),
