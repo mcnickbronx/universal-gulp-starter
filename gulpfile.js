@@ -1,4 +1,4 @@
-// v.1.2.0
+// v.1.2.1
 
 /* Tasks:
 copy - copy files From To... Uses p.copy array. 
@@ -68,14 +68,14 @@ p.copy =  [
         from: [p.bower + 'uikit/src/less/**/*.less'],
         to: p.devLess + 'uikit/' 
     },
-    { 
-        from: [p.bower + 'uikit/dist/css/**/*.css'],
-        to: p.pubCss + 'uikit/' 
-    },
-    { 
-        from: [p.bower + 'uikit/dist/js/*.js', '!'+p.bower + 'uikit/dist/js/*.min.js'],
-        to: p.devJs + 'uikit/' 
-    }         
+    // { 
+    //     from: [p.bower + 'uikit/dist/css/**/*.css'],
+    //     to: p.pubCss + 'uikit/' 
+    // },
+    // { 
+    //     from: [p.bower + 'uikit/dist/js/*.js', '!'+p.bower + 'uikit/dist/js/*.min.js'],
+    //     to: p.devJs + 'uikit/' 
+    // }         
  ];
 
 
@@ -149,7 +149,7 @@ gulp.task('sass', function () {
         .pipe(csso({sourceMap: true})) 
         .pipe(rename({suffix: '.min'})) 
         .pipe(gulp.dest(p.pubCss))
-        .pipe(browserSync.reload());
+        .pipe(browserSync.reload({stream:true}));
 });
 
 // Run:
@@ -177,7 +177,7 @@ gulp.task('less', function () {
         .pipe(csso({sourceMap: true})) 
         .pipe(rename({suffix: '.min'})) 
         .pipe(gulp.dest(p.pubCss))
-        .pipe(browserSync.reload());
+        .pipe(browserSync.reload({stream:true}));
 
 });
 
@@ -206,7 +206,7 @@ gulp.task('css', function () {
             .pipe(sourcemaps.write()) 
             .pipe(rename({suffix: '.min'}))
             .pipe(gulp.dest(p.pubCss))
-            .pipe(browserSync.reload())
+            .pipe(browserSync.reload({stream:true}))
     );
     streamqueue({ objectMode: true },
         gulp.src(p.filesCss)
@@ -215,7 +215,7 @@ gulp.task('css', function () {
             .pipe(csso({sourceMap: true})) 
             .pipe(rename({suffix: '.min'})) 
             .pipe(gulp.dest(p.pubCss))
-            .pipe(browserSync.reload())
+            .pipe(browserSync.reload({stream:true}))
     );
 });
 
@@ -254,7 +254,7 @@ gulp.task('js', function() {
             .pipe(rename({suffix: '.min'}))
             .pipe(sourcemaps.write())
             .pipe(gulp.dest(p.pubJs))
-            .pipe(browserSync.reload())
+            .pipe(browserSync.reload({stream:true}))
     );
     streamqueue({ objectMode: true },
         gulp.src(p.filesJs)
@@ -262,7 +262,7 @@ gulp.task('js', function() {
             .pipe(uglify())
             .pipe(rename({suffix: '.min'})) 
             .pipe(gulp.dest(p.pubJs))
-            .pipe(browserSync.reload())
+            .pipe(browserSync.reload({stream:true}))
     );
 });
 
@@ -305,10 +305,10 @@ gulp.task('watch', ['sync'], function () {
 });
 
 // build task
-gulp.task('build', ['sass','less','css', 'js']);
+gulp.task('build', [/*'sass',*/'less','css', 'js']);
 
 // build task for public
-gulp.task('build-pub', ['sass-pub','less-pub','css-pub', 'js-pub']);
+gulp.task('build-pub', [/*'sass-pub',*/'less-pub','css-pub', 'js-pub']);
 
 // default task
 gulp.task('default', ['watch']);
