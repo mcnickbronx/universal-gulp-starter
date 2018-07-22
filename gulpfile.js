@@ -1,4 +1,4 @@
-// v.1.2.1
+// v.1.3.1
 
 /* Tasks:
 copy - copy files From To... Uses p.copy array. 
@@ -21,6 +21,8 @@ watch - The Watch method is used to monitor your source files. When any changes 
 
 build - Launches tasks: sass, less, css, js
 build-pub - Launches tasks: sass-pub, less-pub, css-pub, js-pub
+
+img - image compression
 
 default task watch
 */
@@ -53,6 +55,13 @@ p.devLess = p.dev + 'less/';
 p.pubJs = p.pub + 'js/'; //js folder for assets
 p.pubCss = p.pub + 'css/'; //css folder for assets
 
+p.devImg = p.dev + 'img/'; 
+p.pubImg = p.pub + 'img/';
+
+//for resize images
+img = {}
+img.width = 1920;
+img.height = 680; 
 
 //Copying files for task Copy (from and to)
 p.copy =  [     
@@ -103,6 +112,13 @@ p.filesCss = [
     '!'+ p.devCss+ '**/*.min.css'
 ];
 
+p.filesImg = [
+    p.devImg + '**/*.png',
+    p.devImg + '**/*.jpg',
+    p.devImg + '**/*.gif',
+    p.devImg + '**/*.jpeg'
+];
+
 // end config
 
 
@@ -119,7 +135,11 @@ var gulp = require('gulp'),
     del = require('del'),
     uglify = require('gulp-uglify'),
     less = require('gulp-less'),
-    streamqueue  = require('streamqueue');
+    streamqueue  = require('streamqueue'),
+    imagemin    = require('gulp-imagemin'), 
+    //pngquant    = require('imagemin-pngquant'),
+    imageResize = require('gulp-image-resize'); //needed http://www.graphicsmagick.org/
+   // imageminJpegRecompress = require('imagemin-jpeg-recompress');
 
 // Copy files
 gulp.task('copy', function() {
@@ -313,18 +333,25 @@ gulp.task('build-pub', [/*'sass-pub',*/'less-pub','css-pub', 'js-pub']);
 // default task
 gulp.task('default', ['watch']);
 
-
-// To do
-// imagemin = require('gulp-imagemin'),
-//     pngquant = require('imagemin-pngquant'),
-// gulp.task('img', function () {
-//     gulp.src(path.src.img) 
-//         .pipe(imagemin({ 
-//             progressive: true,
-//             svgoPlugins: [{removeViewBox: false}],
-//             use: [pngquant()],
-//             interlaced: true
-//         }))
-//         .pipe(gulp.dest(path.build.img)) //И бросим в build
-//         .pipe(reload({stream: true}));
-// });
+gulp.task('img', function() {
+    return gulp.src(p.filesImg)
+        .pipe(imageResize({
+            width : img.width,
+            height : img.height
+        }))
+        .pipe(imagemin({ // Сжимаем их с наилучшими настройками
+            interlaced: true,
+            progressive: true,
+            //optimizationLevel: 3,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [  //pngquant(),
+                    // imageminJpegRecompress({
+                    //     loops: 5,
+                    //     min: 65,
+                    //     max: 70,
+                    //     quality:'medium'
+                    // })
+                ], 
+        }))
+        .pipe(gulp.dest(p.pubImg)); // Выгружаем на продакшен
+});
