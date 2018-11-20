@@ -1,44 +1,42 @@
 # universal-gulp-starter
-gulp starter universal Support for universal config settings.
+Это универсальный gulp файл, который можно использовать в разных проектах. Поддерживает основные типичные задачи для разработчика.
+С поддержкой config (набор переменных), что бы легко можно было настраивать таски под свои проекты.
+Настройте переменные (пути, размер катинок и т.д.) в файле gulpfile.js
 
-Configure constants for yourself (paths, file names, etc.)
-Supports sorting when gluing
 
-## Tasks
+# Задачи
+copy - Автоматическое копирование нужных файлов для работы. Используется массив объектов (p.copy) От куда и Куда.
+del - Удалить файлы из папки публикации p.pub (путь настраиватеся в переменных).
 
-copy - copy files From To... Uses p.copy array. 
-del - clear files from build folder.
+sass - компиляция sass файлов в папку для build файлов (Настраивается в p.pub). css и css.min
+sass-pub - финальная компиляция sass без отладочных файлов sourcemaps и только css.min. 
 
-sass - build sass files. From sass folder to build folder.
-sass-pub - build sass files without sourcemaps and only min files.
+less - компиляция less файлов в папку для build файлов (Настраивается в p.pub). css и css.min
+less-pub - финальная компиляция less без отладочных файлов sourcemaps и без css.min.
 
-less - build less files. From sass folder to build folder.
-less-pub - build less files without sourcemaps and only min files.
+js - сбор и сжатие js файлов. Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+js-pub - сборка файлов js без sourcemaps и только min файлы.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
 
-js - build js files. From js folder to build folder.
-js-pub - build js files without sourcemaps and only min files.
+css - сжатие css.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+css-pub - сжатие css без sourcemaps и только min файлы.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
 
-css - build css files. From css folder to build folder.
-css-pub - build css files without sourcemaps and only min files.
+sync - стартуем BrowserSync
+watch - Метод Watch используется для контроля ваших исходных файлов. Когда будут сделаны какие-либо изменения в исходном файле, Watch будет запускать соответствующую задачу.
 
-sync - start BrowserSync
-watch - The Watch method is used to monitor your source files. When any changes to the source file is made, the watch will run an appropriate task.
+build - запуск задач: sass, less, css, js
+build-pub - запуск задач: sass-pub, less-pub, css-pub, js-pub
 
-build - Launches tasks: sass, less, css, js
-build-pub - Launches tasks: sass-pub, less-pub, css-pub, js-pub
+img - сжатие и ресайз картинок до максимальной ширины и высоты (настраивается в переменных)
+tinypng - сжатие с плагином for TinyPNG (tinypng.com)
 
-default task watch
+таск по умолчанию watch
 
-## Install
-Save files in project folder
+## Установка
+Сохраните файлы в папку своего проекта
 gulpfile.js
 package.json
 
+Запустите из консоли команду
 Run npm -i
 
-Customize your gulpfile.js
-
-## For Russian
-
-Это универсальный gulp файл, который можно использовать в разных проектах. С поддержкой config, что бы легко можно было настраивать таски под свои проекты.
-Настройте переменные в файле gulpfile.js
+Настройте секцию config под свои нужды gulpfile.js

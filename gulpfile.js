@@ -1,69 +1,80 @@
-// v.1.3.1
+// v.1.4.0
 
-/* Tasks:
-copy - copy files From To... Uses p.copy array. 
-del - clear files from build folder.
+/*
 
-sass - build sass files. From sass folder to build folder.
-sass-pub - build sass files without sourcemaps and only min files.
+Universal-gulp-starter
+https://github.com/mcnickbronx/universal-gulp-starter
 
-less - build less files. From sass folder to build folder.
-less-pub - build less files without sourcemaps and only min files.
+Николай Плотников
+Plotnikov.Site
 
-js - build js files. From js folder to build folder.
-js-pub - build js files without sourcemaps and only min files.
+Это универсальный gulp файл, который можно использовать в разных проектах. Поддерживает основные типичные задачи для разработчика.
+С поддержкой config (набор переменных), что бы легко можно было настраивать таски под свои проекты.
+Настройте переменные (пути, размер катинок и т.д.) в файле gulpfile.js
 
-css - build css files. From css folder to build folder.
-css-pub - build css files without sourcemaps and only min files.
 
-sync - start BrowserSync
-watch - The Watch method is used to monitor your source files. When any changes to the source file is made, the watch will run an appropriate task.
+Задачи:
+copy - Автоматическое копирование нужных файлов для работы. Используется массив объектов (p.copy) От куда и Куда.
+del - Удалить файлы из папки публикации p.pub (путь настраиватеся в переменных).
 
-build - Launches tasks: sass, less, css, js
-build-pub - Launches tasks: sass-pub, less-pub, css-pub, js-pub
+sass - компиляция sass файлов в папку для build файлов (Настраивается в p.pub). css и css.min
+sass-pub - финальная компиляция sass без отладочных файлов sourcemaps и только css.min. 
 
-img - image compression
+less - компиляция less файлов в папку для build файлов (Настраивается в p.pub). css и css.min
+less-pub - финальная компиляция less без отладочных файлов sourcemaps и без css.min.
 
-default task watch
+js - сбор и сжатие js файлов. Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+js-pub - сборка файлов js без sourcemaps и только min файлы.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+
+css - сжатие css.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+css-pub - сжатие css без sourcemaps и только min файлы.  Поддерживается порядок сборки файлов. То есть какой файл идет первым, вторым и т.д.
+
+sync - стартуем BrowserSync
+watch - Метод Watch используется для контроля ваших исходных файлов. Когда будут сделаны какие-либо изменения в исходном файле, Watch будет запускать соответствующую задачу.
+
+build - запуск задач: sass, less, css, js
+build-pub - запуск задач: sass-pub, less-pub, css-pub, js-pub
+
+img - сжатие и ресайз картинок до максимальной ширины и высоты (настраивается в переменных)
+tinypng - tinypng - сжатие с плагином for TinyPNG (tinypng.com)
+
+таск по умолчанию watch
 */
 
-//config
+//настройки
 
-//for BrowserSync         
-var site = "wp-uikit.local";
+var site = "wp-uikit.local"; //Для BrowserSync урл локального сайта
 
-// Path object
-var p = {};
+var p = {}; // Объекты путей
 
-//Resulting file for concat js
-p.resultJs = 'main.js';
+p.resultJs = 'main.js'; //Общий файл js для конкатинации разных js из папки p.dev
 
-//Resulting file for concat css
-p.resultCss = 'main.css';
+p.resultCss = 'main.css'; //Общий файл для конкантинации css из папки p.dev
 
-p.bower = './bower_components/';
-p.node = './node_modules/';
+p.bower = './bower_components/'; //Папка для bower
+p.node = './node_modules/'; //Папка node
 
-p.dev = './src/'; //Custom (saas, js ...)
-p.pub = './assets/'; //Build folder (min.css, css, js, js.min, ...)
+p.dev = './src/'; //Папка исходных файлов (saas, less, js ...)
+p.pub = './assets/'; //Папка для сборки файлов (min.css, css, js, js.min, ...)
 
-p.devJs = p.dev + 'js/'; //js folder for developer
-p.devSass = p.dev + 'sass/'; //sass folder for developer
-p.devCss = p.dev + 'css/'; //sass folder for developer
-p.devLess = p.dev + 'less/';
+p.devJs = p.dev + 'js/'; //папка js ресурсов
+p.devSass = p.dev + 'sass/'; //папка sass ресурсов
+p.devCss = p.dev + 'css/'; //папка css файлов
+p.devLess = p.dev + 'less/'; //папка less файлов
 
-p.pubJs = p.pub + 'js/'; //js folder for assets
-p.pubCss = p.pub + 'css/'; //css folder for assets
+p.pubJs = p.pub + 'js/'; //js папка для сборки
+p.pubCss = p.pub + 'css/'; //css папка для сборки
 
 p.devImg = p.dev + 'img/'; 
-p.pubImg = p.pub + 'img/';
+p.pubImg = './img/';
 
-//for resize images
+//Для обработки изображений
 img = {}
-img.width = 1920;
-img.height = 680; 
+img.width = 1200;
+img.height = 800; 
+img.API_KEY = ''; //Ключ для TinyPNG
 
-//Copying files for task Copy (from and to)
+//Копирование нужных файлов (from and to)
 p.copy =  [     
     {   
         from: [p.bower + 'uikit/dist/js/*.min.js'],
@@ -88,25 +99,25 @@ p.copy =  [
  ];
 
 
-//Stream files
+//Файлы для таксков
 
-//Files for task sass
+//Файлы sass
 p.filesSass = [
     p.devSass + '/*.scss'
 ];
 
-//Files for task less
+//Файлы less
 p.filesLess = [
     p.devLess + '/*.less'
 ];
 
-//Files for task Js. With order files. 
+//Js. Поддерживается сортировка, то есть порядок сборки файлов. 
 p.filesJs = [
     p.devJs + '**/*.js',
     '!'+ p.devJs + '**/*.min.js'
 ];
 
-//Files for task css. With order files.
+//Файлы css с поддержкой сортировки. То есть порядок сборки файлов.
 p.filesCss = [
     p.devCss + '**/*.css',
     '!'+ p.devCss+ '**/*.min.css'
@@ -122,10 +133,10 @@ p.filesImg = [
 // end config
 
 
-// Defining requirements
+// Подключаемые модули
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
-    plumber = require('gulp-plumber'), //Tracking errors
+    plumber = require('gulp-plumber'),
     browserSync = require('browser-sync'),
     autoprefixer = require('gulp-autoprefixer'),
     csso = require('gulp-csso'),
@@ -136,10 +147,11 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     less = require('gulp-less'),
     streamqueue  = require('streamqueue'),
-    imagemin    = require('gulp-imagemin'), 
+    imagemin    = require('gulp-imagemin'),
+    imageResize = require('gulp-image-resize'), //needed http://www.graphicsmagick.org/
     //pngquant    = require('imagemin-pngquant'),
-    imageResize = require('gulp-image-resize'); //needed http://www.graphicsmagick.org/
-   // imageminJpegRecompress = require('imagemin-jpeg-recompress');
+    //imageminJpegRecompress = require('imagemin-jpeg-recompress'),
+    tingpng = require('gulp-tinypng'); 
 
 // Copy files
 gulp.task('copy', function() {
@@ -258,9 +270,6 @@ gulp.task('css-pub', function () {
     );
 });
 
-// Run: 
-// gulp scripts. 
-// Uglifies and concat all JS files into one
 gulp.task('js', function() {
     streamqueue({ objectMode: true },
         gulp.src(p.filesJs)
@@ -286,9 +295,6 @@ gulp.task('js', function() {
     );
 });
 
-// Run: 
-// gulp scripts. 
-// Uglifies and concat all JS files into one with order
 gulp.task('js-pub', function() {
     streamqueue({ objectMode: true },
         gulp.src(p.filesJs)
@@ -324,34 +330,47 @@ gulp.task('watch', ['sync'], function () {
     gulp.watch('**/*.html', browserSync.reload);
 });
 
-// build task
-gulp.task('build', [/*'sass',*/'less','css', 'js']);
+gulp.task('build', ['sass','less','css', 'js']);
 
-// build task for public
-gulp.task('build-pub', [/*'sass-pub',*/'less-pub','css-pub', 'js-pub']);
+gulp.task('build-pub', ['sass-pub','less-pub','css-pub', 'js-pub']);
 
-// default task
 gulp.task('default', ['watch']);
 
 gulp.task('img', function() {
-    return gulp.src(p.filesImg)
+     gulp.src(p.filesImg)
         .pipe(imageResize({
             width : img.width,
             height : img.height
         }))
-        .pipe(imagemin({ // Сжимаем их с наилучшими настройками
+        .pipe(imagemin({
             interlaced: true,
             progressive: true,
-            //optimizationLevel: 3,
+            optimizationLevel: 3,
             svgoPlugins: [{removeViewBox: false}],
-            use: [  //pngquant(),
-                    // imageminJpegRecompress({
-                    //     loops: 5,
-                    //     min: 65,
-                    //     max: 70,
-                    //     quality:'medium'
-                    // })
+            use: [ /* плагины для более тонкой настройки
+                    pngquant({optimizationLevel: 3}),
+                    pngquant({
+                        verbose: "true",
+                        quality: '50-65',
+                        speed: 1
+                    }),
+                    imageminJpegRecompress({
+                        loops: 5,
+                        min: 65,
+                        max: 70,
+                        quality:'medium'
+                    })*/
                 ], 
         }))
         .pipe(gulp.dest(p.pubImg)); // Выгружаем на продакшен
+});
+
+gulp.task('tinypng', function () {
+    gulp.src(p.filesImg)
+        .pipe(imageResize({
+            width : img.width,
+            height : img.height
+        }))
+        .pipe(tingpng(img.API_KEY))
+        .pipe(gulp.dest(p.pubImg));
 });
